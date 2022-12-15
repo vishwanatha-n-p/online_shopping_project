@@ -1,0 +1,41 @@
+#JWT secret key
+jwt:
+  secret: javainuse
+
+# JPA/Hibernate
+  spring:
+    jpa:
+      general-ddl: true
+      database: MYSQL
+      show-sql: true
+      database-platform: org.hibernate.dialect.MySQL8Dialect
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          auto: update
+        open-in-view: false
+
+# JDBC properties
+spring:
+  datasource:
+    drive-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/online_shopping_test
+    username: root
+    password: Tibca1111
+  flyway:
+    locations: "classpath:db/migration"
+    schema: online_shopping_test
+
+# flyway properties
+flyway:
+  validateOnMigrate: true
+  encoding: UTF8MB4
+  outOfOrder: true
+  ignoreIgnoredMigrations: true
+
+# log level properties
+debug: true
+
+
+
+
