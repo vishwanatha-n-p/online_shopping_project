@@ -27,4 +27,6 @@ public class AddressRequestDto {
     @NotEmpty(message = "Enter country")
     String country;
 
+    int ab;
+
 }
