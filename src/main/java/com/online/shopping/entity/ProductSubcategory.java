@@ -33,7 +33,7 @@ public class ProductSubcategory {
     @Column(name = "id")
     public int id;
 
-    @Column(name = "subcategory_name")
+    @Column(name = "subcategory_name", unique = true)
     private String subcategoryName;
 
     @Column(name = "last_update")
@@ -44,7 +44,7 @@ public class ProductSubcategory {
     @JoinColumn(name = "product_category_id")
     private ProductCategory productCategory;
 
-    @Column(name = "status", unique = true)
+    @Column(name = "status")
     private ProductStatus status;
 
     public ProductSubcategory(String subcategoryName) {

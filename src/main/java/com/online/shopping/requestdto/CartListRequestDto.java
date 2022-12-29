@@ -19,4 +19,8 @@ public class CartListRequestDto {
     @NotNull(message = "Enter Product id")
     Integer productId;
 
+    public CartListRequestDto(int productId) {
+        this.productId = productId;
+    }
+
 }

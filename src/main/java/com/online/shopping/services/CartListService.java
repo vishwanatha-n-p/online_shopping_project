@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,21 +44,20 @@ public class CartListService {
         int userId = validate.getUserId(authorization);
         Optional<Product> product = productRepository.findById(cartListRequestDto.getProductId());
         if (product.isPresent()) {
-            List<Integer> idNumbers = cartListRepository.findAllProductIdByUserId(userId);
-            Optional<CartList> cartList = cartListRepository.findByUserId(userId);
-            Optional<User> user = userRepository.findById(userId);
-            if (!cartList.isPresent()) {
+            CartList cartList = cartListRepository.findByUserId(userId).orElse(null);
+            if (Objects.isNull(cartList)) {
                 CartList cartListResponse = cartListMapper.convertDtoToEntity(cartListRequestDto);
+                Optional<User> user = userRepository.findById(userId);
                 cartListResponse.setUser(user.get());
                 cartListResponse.addProduct(product.get());
                 return cartListMapper.convertEntityToDto(cartListRepository.save(cartListResponse));
             }
-            if (cartList.isPresent() && !idNumbers.contains(cartListRequestDto.getProductId())) {
-                cartList.get().addProduct(product.get());
-                return cartListMapper.convertEntityToDto(cartListRepository.save(cartList.get()));
-            } else {
-                throw new ProductNotFoundException(ErrorConstants.PRODUCT_EXIST_ERROR);
+            List<Integer> idNumbers = cartListRepository.findAllProductIdByUserId(userId);
+            if (!idNumbers.contains(cartListRequestDto.getProductId())) {
+                cartList.addProduct(product.get());
+                return cartListMapper.convertEntityToDto(cartListRepository.save(cartList));
             }
+            throw new ProductNotFoundException(ErrorConstants.PRODUCT_EXIST_ERROR);
         }
         throw new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_EXIST_ERROR);
     }
@@ -72,10 +72,11 @@ public class CartListService {
     }
 
     public CartListResponseDto removeProductFromCartList(int productId, String authorization) {
-        Optional<CartList> cartList = cartListRepository.findByUserId(validate.getUserId(authorization));
-        if (cartList.isPresent()) {
-            cartList.get().getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.getId() == productId).forEach(a -> cartList.get().removeProduct(a));
-            return cartListMapper.convertEntityToDto(cartListRepository.save(cartList.get()));
+        CartList cartList = cartListRepository.findByUserId(validate.getUserId(authorization)).orElse(null);
+        if (Objects.nonNull(cartList)) {
+            List<Product> products = cartList.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.getId() == productId).collect(Collectors.toList());
+            cartList.removeProduct(products);
+            return cartListMapper.convertEntityToDto(cartListRepository.save(cartList));
         }
         throw new CartListNotFoundException(ErrorConstants.CART_LIST_NOT_FOUND_ERROR);
     }

@@ -1,6 +1,5 @@
 package com.online.shopping.services;
 
-import com.online.shopping.repository.FinalOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,9 +15,6 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
-
-    @Autowired
-    private FinalOrderRepository finalOrderRepository;
 
     @Value("${spring.mail.username}")
     private String sender;

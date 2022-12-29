@@ -11,12 +11,10 @@ import java.util.Optional;
 @Repository
 public interface CustomerDetailRepository extends JpaRepository<CustomerDetail, Integer> {
 
-    Optional<CustomerDetail> findByUserId(int userId);
+    @Query(nativeQuery = true, value = "SELECT * FROM customer_detail WHERE user_id = :user_id ORDER BY user_id, id DESC LIMIT 1")
+    Optional<CustomerDetail> findLastCustomerDetailByUserId(@Param("user_id") int userId);
 
-    @Query(nativeQuery = true, name = "select * from customer_detail as cd where cd.user_id= :user_id order by cd.user_id,cd.id desc limit 1")
-    Optional<CustomerDetail> findLastByUserId(@Param("user_id") int userId);
-
-    @Query(nativeQuery = true, value = "SELECT * FROM customer_detail cd WHERE cd.user_id = :user_id ORDER BY cd.user_id,cd.id DESC LIMIT 1")
-    CustomerDetail findLastCustomerDetailByUserId(@Param("user_id") int userId);
+    @Query(nativeQuery = true, value = "SELECT * FROM customer_detail WHERE user_id= :user_id AND first_name= :first_name AND last_name= :last_name AND email= :email")
+    Optional<CustomerDetail> findCustomerDetail(@Param("user_id") int userId, @Param("first_name") String firstName, @Param("last_name") String lastName, @Param("email") String email);
 
 }

@@ -43,7 +43,7 @@ public class HighlightsController {
 
     @PreAuthorize("hasRole('ROLE_Seller') or hasRole('ROLE_Manager')")
     @DeleteMapping("/{highlightId}")
-    public String removeHighlights(@PathVariable int highlightId) {
+    public HighlightsResponseDto removeHighlights(@PathVariable int highlightId) {
         return highlightsService.removeHighlights(highlightId);
     }
 

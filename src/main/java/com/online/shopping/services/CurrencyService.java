@@ -8,6 +8,7 @@ import com.online.shopping.repository.CurrencyRepository;
 import com.online.shopping.requestdto.CurrencyRequestDto;
 import com.online.shopping.responsedto.CurrencyResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,26 +24,31 @@ public class CurrencyService {
     @Autowired
     private CurrencyMapper currencyMapper;
 
-    public CurrencyResponseDto addCurrency(CurrencyRequestDto currencyRequestDto){
+    public CurrencyResponseDto addCurrency(CurrencyRequestDto currencyRequestDto) {
         Optional<Currency> currency = currencyRepository.findById(currencyRequestDto.getId());
         if (!currency.isPresent()) {
             return currencyMapper.convertEntityToDto(currencyRepository.save(currencyMapper.convertDtoToEntity(currencyRequestDto)));
-        } else {
-            return currencyMapper.convertEntityToDto(currencyRepository.save(currency.get()));
         }
+        throw new CurrencyNotFoundException(ErrorConstants.CURRENCY_EXIST_ERROR);
     }
 
-    public List<CurrencyResponseDto> getCurrency(){
+    public List<CurrencyResponseDto> getAllCurrency() {
         return currencyRepository.findAll().stream().map(currency -> currencyMapper.convertEntityToDto(currency)).collect(Collectors.toList());
     }
 
-    public Currency getSingleCurrency(int currencyId){
-        return currencyRepository.findById(currencyId).orElseThrow(()-> new CurrencyNotFoundException(ErrorConstants.CURRENCY_NOT_FOUND_ERROR + currencyId));
+    public CurrencyResponseDto getSingleCurrency(int currencyId) {
+        Currency currency = currencyRepository.findById(currencyId).orElseThrow(() -> new CurrencyNotFoundException(ErrorConstants.CURRENCY_NOT_FOUND_ERROR + currencyId));
+        return currencyMapper.convertEntityToDto(currency);
     }
 
-    public String removeCurrency(int currencyId){
-        currencyRepository.delete(currencyRepository.findById(currencyId).orElseThrow(() -> new CurrencyNotFoundException(ErrorConstants.CURRENCY_NOT_FOUND_ERROR + currencyId)));
-        return "Successfully deleted the Currency where id:" + currencyId;
+    public CurrencyResponseDto removeCurrency(int currencyId) {
+        Currency currency = currencyRepository.findById(currencyId).orElseThrow(() -> new CurrencyNotFoundException(ErrorConstants.CURRENCY_NOT_FOUND_ERROR + currencyId));
+        try {
+            currencyRepository.delete(currency);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(ErrorConstants.CURRENCY_ALREADY_USED_ERROR);
+        }
+        return currencyMapper.convertEntityToDto(currency);
     }
 
 }

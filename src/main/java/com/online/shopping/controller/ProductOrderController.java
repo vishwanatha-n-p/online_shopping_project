@@ -1,7 +1,7 @@
 package com.online.shopping.controller;
 
-import com.online.shopping.requestdto.OrderFromProductRequestDto;
 import com.online.shopping.requestdto.OrderFromPriceDetailRequestDto;
+import com.online.shopping.requestdto.OrderFromProductRequestDto;
 import com.online.shopping.responsedto.ProductOrderResponseDto;
 import com.online.shopping.services.ProductOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class ProductOrderController {
 
     @PreAuthorize("hasRole('ROLE_Customer')")
     @DeleteMapping("/{productOrderId}")
-    public String removeProductOrder(@PathVariable int productOrderId) {
+    public ProductOrderResponseDto removeProductOrder(@PathVariable int productOrderId) {
         return productOrderService.removeProductOrder(productOrderId);
     }
 

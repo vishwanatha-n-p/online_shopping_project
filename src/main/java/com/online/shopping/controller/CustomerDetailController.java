@@ -44,7 +44,7 @@ public class CustomerDetailController {
 
     @PreAuthorize("hasRole('ROLE_Manage')")
     @DeleteMapping("/customerDetailId")
-    public String removeCustomerDetail(@PathVariable int customerDetailId) {
+    public CustomerDetailResponseDto removeCustomerDetail(@PathVariable int customerDetailId) {
         return customerDetailService.removeCustomerDetail(customerDetailId);
     }
 

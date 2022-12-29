@@ -49,7 +49,7 @@ public class PriceDetailController {
 
     @PreAuthorize("hasRole('ROLE_Seller')")
     @DeleteMapping("/{priceDetailId}")
-    public String removePriceDetail(@PathVariable int priceDetailId) {
+    public PriceDetailResponseDto removePriceDetail(@PathVariable int priceDetailId) {
         return priceDetailService.removePriceDetail(priceDetailId);
     }
 

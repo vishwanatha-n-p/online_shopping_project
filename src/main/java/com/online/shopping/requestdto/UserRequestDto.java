@@ -22,4 +22,9 @@ public class UserRequestDto {
     @NotEmpty(message = "Enter role")
     private String roleName;
 
+    public UserRequestDto(String userName, String password, String roleName) {
+        this.userName = userName;
+        this.password = password;
+        this.roleName = roleName;
+    }
 }

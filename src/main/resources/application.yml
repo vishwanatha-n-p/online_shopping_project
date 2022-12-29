@@ -19,12 +19,12 @@ jwt:
 spring:
   datasource:
     drive-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/online_shopping_test
+    url: jdbc:mysql://localhost:3306/online_shopping
     username: root
     password: Tibca1111
   flyway:
     locations: "classpath:db/migration"
-    schema: online_shopping_test
+    schema: online_shopping
 
 # flyway properties
 flyway:

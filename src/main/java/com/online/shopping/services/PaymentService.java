@@ -18,6 +18,7 @@ import com.online.shopping.repository.ProductOrderRepository;
 import com.online.shopping.requestdto.PaymentRequestDto;
 import com.online.shopping.responsedto.PaymentResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,12 +64,12 @@ public class PaymentService {
         paymentMode.ifPresent(pm -> payment.setPaymentMode(pm));
         long totalAmount = productOrderRepository.findCostSumByUserId(userId);
         payment.setAmount(totalAmount);
-        CustomerDetail customerDetail = customerDetailRepository.findLastCustomerDetailByUserId(userId);
-        if (Objects.nonNull(customerDetail)) {
-            payment.setCustomerDetail(customerDetail);
-        } else {
+        CustomerDetail customerDetail = customerDetailRepository.findLastCustomerDetailByUserId(userId).orElse(null);
+        if (Objects.isNull(customerDetail)) {
             throw new GeneralException(ErrorConstants.CUSTOMER_DETAIL_NOT_EXIST_ERROR);
         }
+        payment.setCustomerDetail(customerDetail);
+
         if (paymentRequestDto.getPaymentModeName().equals("Cash on Delivery")) {
             payment.setPaymentStatus(PaymentStatus.NOT_PAID);
         } else {
@@ -80,7 +81,7 @@ public class PaymentService {
         finalOrderService.saveFinalOrder(productOrders, paymentResponse);
         sendSimpleConfirmationMail(customerDetail);
         sendOrderConfirmationMail(customerDetail, paymentResponse.getId());
-        productOrders.stream().map(productOrder -> productOrder.getId()).forEach(id -> productOrderRepository.deleteById(id));
+        productOrders.stream().forEach(productOrder -> productOrderRepository.deleteById(productOrder.getId()));
         return paymentMapper.convertEntityToDto(paymentResponse);
     }
 
@@ -124,13 +125,19 @@ public class PaymentService {
         return paymentRepository.findAll().stream().map(payment -> paymentMapper.convertEntityToDto(payment)).collect(Collectors.toList());
     }
 
-    public Payment getSinglePayment(int paymentId) {
-        return paymentRepository.findById(paymentId).orElseThrow(() -> new GeneralException(ErrorConstants.PAYMENT_NOT_FOUND_ERROR + paymentId));
+    public PaymentResponseDto getSinglePayment(int paymentId) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new GeneralException(ErrorConstants.PAYMENT_NOT_FOUND_ERROR + paymentId));
+        return paymentMapper.convertEntityToDto(payment);
     }
 
-    public String removePayment(int paymentId) {
-        paymentRepository.deleteById(paymentId);
-        return "Successfully deleted Payment";
+    public PaymentResponseDto removePayment(int paymentId) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new GeneralException(ErrorConstants.PAYMENT_NOT_FOUND_ERROR + paymentId));
+        try {
+            paymentRepository.delete(payment);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(ErrorConstants.PAYMENT_ALREADY_USED_ERROR);
+        }
+        return paymentMapper.convertEntityToDto(payment);
     }
 
 }

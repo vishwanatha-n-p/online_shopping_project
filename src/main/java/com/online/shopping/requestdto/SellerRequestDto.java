@@ -45,4 +45,15 @@ public class SellerRequestDto {
     @NotEmpty(message = "Enter your country")
     String country;
 
+    public SellerRequestDto(String sellerName, String service, String contactNumber, String email, String city, String state, String postalCode, String country) {
+        this.sellerName = sellerName;
+        this.service = service;
+        this.contactNumber = contactNumber;
+        this.email = email;
+        this.city = city;
+        this.state = state;
+        this.postalCode = postalCode;
+        this.country = country;
+    }
+
 }

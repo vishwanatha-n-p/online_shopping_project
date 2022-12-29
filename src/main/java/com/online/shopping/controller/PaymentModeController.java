@@ -1,6 +1,5 @@
 package com.online.shopping.controller;
 
-import com.online.shopping.entity.PaymentMode;
 import com.online.shopping.requestdto.PaymentModeRequestDto;
 import com.online.shopping.responsedto.PaymentModeResponseDto;
 import com.online.shopping.services.PaymentModeService;
@@ -36,13 +35,13 @@ public class PaymentModeController {
     }
 
     @GetMapping("/{paymentModeId}")
-    public PaymentMode getSinglePaymentMode(@PathVariable int paymentModeId) {
+    public PaymentModeResponseDto getSinglePaymentMode(@PathVariable int paymentModeId) {
         return paymentModeService.getSinglePaymentMode(paymentModeId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{paymentModeId}")
-    public String removePaymentMode(@PathVariable int paymentModeId) {
+    public PaymentModeResponseDto removePaymentMode(@PathVariable int paymentModeId) {
         return paymentModeService.removePaymentMode(paymentModeId);
     }
 

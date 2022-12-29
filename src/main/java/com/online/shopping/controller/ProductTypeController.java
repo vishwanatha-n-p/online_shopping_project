@@ -49,14 +49,20 @@ public class ProductTypeController {
     }
 
     @PreAuthorize("hasRole('ROLE_Seller') or hasRole('ROLE_Manager')")
-    @PutMapping("/updateStatus/{productTypeId}")
-    public ProductTypeResponseDto updateProductTypeStatus(@PathVariable int productTypeId) {
-        return productTypeService.updateProductTypeStatus(productTypeId);
+    @PutMapping("/inactivateStatus/{productTypeId}")
+    public ProductTypeResponseDto inactivateProductTypeStatus(@PathVariable int productTypeId) {
+        return productTypeService.activateProductTypeStatus(productTypeId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_Seller') or hasRole('ROLE_Manager')")
+    @PutMapping("/activateStatus/{productTypeId}")
+    public ProductTypeResponseDto activateProductTypeStatus(@PathVariable int productTypeId) {
+        return productTypeService.activateProductTypeStatus(productTypeId);
     }
 
     @PreAuthorize("hasRole('ROLE_Seller') or hasRole('ROLE_Manager')")
     @DeleteMapping("/{productTypeId}")
-    public String removeProductType(@PathVariable int productTypeId) {
+    public ProductTypeResponseDto removeProductType(@PathVariable int productTypeId) {
         return productTypeService.removeProductType(productTypeId);
     }
 

@@ -11,5 +11,5 @@ public interface MyOrderRepository extends JpaRepository<MyOrders, Integer> {
 
     List<MyOrders> findAllByUserId(int userId);
 
-    String findProductNameById(int myOrderId);
+    MyOrders findProductNameById(int myOrderId);
 }

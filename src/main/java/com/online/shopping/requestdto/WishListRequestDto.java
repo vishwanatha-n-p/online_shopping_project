@@ -18,4 +18,8 @@ public class WishListRequestDto {
     @Positive(message = "Enter valid product id")
     Integer productId;
 
+    public WishListRequestDto(Integer productId) {
+        this.productId = productId;
+    }
+
 }

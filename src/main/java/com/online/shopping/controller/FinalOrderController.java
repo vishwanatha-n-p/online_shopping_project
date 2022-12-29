@@ -1,6 +1,7 @@
 package com.online.shopping.controller;
 
 import com.online.shopping.responsedto.FinalOrderResponseDto;
+import com.online.shopping.responsedto.MyOrderResponseDto;
 import com.online.shopping.services.FinalOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,14 +35,14 @@ public class FinalOrderController {
 
     @PreAuthorize("hasRole('ROLE_Customer')")
     @PutMapping("/{finalOrderId}/cancel")
-    public String cancelFinalOrder(@PathVariable int finalOrderId, @RequestHeader String authorization) {
+    public MyOrderResponseDto cancelFinalOrder(@PathVariable int finalOrderId, @RequestHeader String authorization) {
         return finalOrderService.cancelFinalOrder(finalOrderId, authorization);
     }
 
     @PreAuthorize("hasRole('ROLE_Seller')")
     @PutMapping("/{finalOrderId}/delivered")
-    public String deliverFinalOrder(@PathVariable int finalOrderId, @RequestHeader String authorization) {
-        return finalOrderService.deliverFinalOrder(finalOrderId, authorization);
+    public MyOrderResponseDto deliverFinalOrder(@PathVariable int finalOrderId) {
+        return finalOrderService.deliverFinalOrder(finalOrderId);
     }
 
 }

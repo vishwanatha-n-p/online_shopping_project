@@ -11,14 +11,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,11 +63,15 @@ public class Seller {
     @Column(name = "country")
     private String country;
 
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH})
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @UpdateTimestamp
     @Column(name = "last_update")
     private LocalDateTime updatedAt;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "seller_product", joinColumns = {@JoinColumn(name = "seller_id")}, inverseJoinColumns = {@JoinColumn(name = "product_id")})
     @JsonIgnore
     @ToString.Exclude
@@ -85,8 +92,12 @@ public class Seller {
         this.products.add(productResponse);
     }
 
-    public void removeSellerProduct(Product productResponse) {
-        this.products.remove(productResponse);
+    public void removeSellerProduct(List<Product> productResponse) {
+        Iterator<Product> productIterator = productResponse.iterator();
+        while (productIterator.hasNext()) {
+            Product product = productIterator.next();
+            this.products.remove(product);
+        }
     }
 
 }

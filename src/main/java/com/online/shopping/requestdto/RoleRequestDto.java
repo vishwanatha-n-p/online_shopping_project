@@ -19,4 +19,8 @@ public class RoleRequestDto {
     @NotNull(message = "Enter role name")
     String roleName;
 
+    public RoleRequestDto(String roleName) {
+        this.roleName = roleName;
+    }
+
 }

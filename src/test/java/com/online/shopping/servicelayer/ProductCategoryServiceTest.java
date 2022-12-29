@@ -1,34 +1,62 @@
 package com.online.shopping.servicelayer;
 
-import com.online.shopping.entity.ProductCategory;
-import com.online.shopping.repository.ProductCategoryRepository;
 import com.online.shopping.requestdto.ProductCategoryRequestDto;
 import com.online.shopping.responsedto.ProductCategoryResponseDto;
 import com.online.shopping.services.ProductCategoryService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class ProductCategoryServiceTest {
 
     @Autowired
     private ProductCategoryService productCategoryService;
 
-    @Autowired
-    private ProductCategoryRepository productCategoryRepository;
+    @Test
+    public void test_addCategory() {
+        ProductCategoryRequestDto productCategoryRequest = new ProductCategoryRequestDto("Other");
+        ProductCategoryResponseDto productCategoryResponse = productCategoryService.addCategory(productCategoryRequest);
+        assertEquals(productCategoryRequest.getCategoryName(), productCategoryResponse.getCategoryName());
+    }
 
     @Test
-    public void should_save_product_category(){
-//        ProductCategoryRequestDto categoryRequestDto = new ProductCategoryRequestDto(1, "Electronics");
-//        ProductCategoryResponseDto savedProductCategory = productCategoryService.addCategory(categoryRequestDto);
-//        assertThat(savedProductCategory).isNotNull();
+    public void test_getAllCategory() {
+        List<ProductCategoryResponseDto> productCategories = productCategoryService.getAllCategory();
+        assertThat(productCategories.size()).isGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    public void test_getSingleCategory() {
+        int productCategoryId = 1;
+        ProductCategoryResponseDto productCategoryResponse = productCategoryService.getSingleCategory(productCategoryId);
+        assertEquals(productCategoryId, productCategoryResponse.getId());
+    }
+
+    @Test
+    public void test_inactivateCategoryStatus() {
+        int productCategoryId = 4;
+        ProductCategoryResponseDto productCategoryResponse = productCategoryService.inactivateCategoryStatus(productCategoryId);
+        assertEquals(productCategoryId, productCategoryResponse.getId());
+    }
+
+    @Test
+    public void test_activateCategoryStatus() {
+        int productCategoryId = 5;
+        ProductCategoryResponseDto productCategoryResponse = productCategoryService.activateCategoryStatus(productCategoryId);
+        assertEquals(productCategoryId, productCategoryResponse.getId());
+    }
+
+    @Test
+    public void test_removeCategory() {
+        int productCategoryId = 1;
+        ProductCategoryResponseDto productCategory = productCategoryService.removeCategory(productCategoryId);
+        assertThat(productCategory).isNotNull();
     }
 
 }

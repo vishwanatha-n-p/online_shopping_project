@@ -33,18 +33,18 @@ public class ProductType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "product_type")
+    @Column(name = "product_type", unique = true)
     private String productType;
 
-    @Column(name = "last_update")
     @UpdateTimestamp
+    @Column(name = "last_update")
     private LocalDateTime updatedAt;
 
-    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "product_subcategory_id")
     private ProductSubcategory productSubcategory;
 
-    @Column(name = "status", unique = true)
+    @Column(name = "status")
     private ProductStatus status;
 
     public ProductType(String productType) {

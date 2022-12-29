@@ -11,6 +11,7 @@ import com.online.shopping.general.Validate;
 import com.online.shopping.mapper.FinalOrderMapper;
 import com.online.shopping.repository.FinalOrderRepository;
 import com.online.shopping.responsedto.FinalOrderResponseDto;
+import com.online.shopping.responsedto.MyOrderResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,27 +64,24 @@ public class FinalOrderService {
         }
     }
 
-    public String cancelFinalOrder(int finalOrderId, String authorization) {
+    public MyOrderResponseDto cancelFinalOrder(int finalOrderId, String authorization) {
         FinalOrder finalOrder = finalOrderRepository.findById(finalOrderId).orElse(null);
         if (Objects.nonNull(finalOrder)) {
-//            finalOrder.setOrderStatus(OrderStatus.CANCELED);
-            myOrderService.saveMyOrder(finalOrder, authorization, OrderStatus.CANCELED);
+            MyOrderResponseDto myOrderResponse = myOrderService.saveCancelledOrder(finalOrder, authorization, OrderStatus.CANCELED);
             finalOrderRepository.delete(finalOrder);
-//            return finalOrderMapper.convertEntityToDto(finalOrderRepository.save(finalOrder));
-            return "Your Order is canceled";
+            return myOrderResponse;
         }
         throw new GeneralException(ErrorConstants.ORDER_NOT_FOUND_ERROR);
     }
 
-    public String deliverFinalOrder(int finalOrderId, String authorization) {
+    public MyOrderResponseDto deliverFinalOrder(int finalOrderId) {
         FinalOrder finalOrder = finalOrderRepository.findById(finalOrderId).orElse(null);
         if (Objects.nonNull(finalOrder)) {
-//            finalOrder.setOrderStatus(OrderStatus.DELIVERED);
-            myOrderService.saveMyOrder(finalOrder, authorization, OrderStatus.DELIVERED);
+            MyOrderResponseDto myOrderResponse = myOrderService.saveDeliverOrder(finalOrder, OrderStatus.DELIVERED);
             finalOrderRepository.delete(finalOrder);
-//            return finalOrderMapper.convertEntityToDto(finalOrderRepository.save(finalOrder));
-            return "Your Order is delivered";
+            return myOrderResponse;
         }
         throw new GeneralException(ErrorConstants.ORDER_NOT_FOUND_ERROR);
     }
+
 }

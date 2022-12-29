@@ -16,7 +16,7 @@ public class HighlightsResponseDto {
 
     int id;
 
-    String productName;
+    String modelNumber;
 
     String features;
 

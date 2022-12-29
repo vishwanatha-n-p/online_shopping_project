@@ -1,6 +1,5 @@
 package com.online.shopping.controller;
 
-import com.online.shopping.entity.Payment;
 import com.online.shopping.requestdto.PaymentRequestDto;
 import com.online.shopping.responsedto.PaymentResponseDto;
 import com.online.shopping.services.EmailService;
@@ -44,13 +43,13 @@ public class PaymentController {
 
     @PreAuthorize("hasRole('ROLE_Customer')")
     @GetMapping("/{paymentId}")
-    public Payment getSinglePayment(@PathVariable @NotNull int paymentId) {
+    public PaymentResponseDto getSinglePayment(@PathVariable @NotNull int paymentId) {
         return paymentService.getSinglePayment(paymentId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{paymentId}")
-    public String removePayment(@PathVariable int paymentId) {
+    public PaymentResponseDto removePayment(@PathVariable int paymentId) {
         return paymentService.removePayment(paymentId);
     }
 

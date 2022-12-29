@@ -41,7 +41,7 @@ public class RoleController {
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{roleId}")
-    public String removeRole(@PathVariable int roleId) {
+    public RoleResponseDto removeRole(@PathVariable int roleId) {
         return roleService.removeRole(roleId);
     }
 

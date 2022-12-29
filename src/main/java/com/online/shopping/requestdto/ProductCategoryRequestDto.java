@@ -18,4 +18,8 @@ public class ProductCategoryRequestDto {
     @NotNull(message = "Enter Category name")
     private String categoryName;
 
+    public ProductCategoryRequestDto(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
 }

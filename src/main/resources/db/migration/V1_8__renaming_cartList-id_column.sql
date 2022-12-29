@@ -1,0 +1,1 @@
+ALTER TABLE cart_list_product RENAME COLUMN cartList_id TO cart_list_id;

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface FinalOrderRepository extends JpaRepository<FinalOrder, Integer> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM final_order AS f JOIN payment p ON p.id=f.payment_id JOIN customer_detail cd ON cd.id=p.customer_detail_id WHERE cd.user_id= :user_id")
+    @Query(nativeQuery = true, value = "SELECT * FROM final_order AS f JOIN payment p ON p.id=f.payment_id JOIN customer_detail cd ON cd.id=p.customer_detail_id WHERE cd.user_id= :user_id ")
     List<FinalOrder> findAllByUserId(@Param("user_id") int userId);
 
     List<FinalOrder> findAllByPaymentId(int i);

@@ -42,14 +42,20 @@ public class ProductCategoryController {
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
-    @PutMapping("/updateStatus/{categoryId}")
-    public ProductCategoryResponseDto updateCategoryStatus(@PathVariable int categoryId) {
-        return categoryService.updateCategoryStatus(categoryId);
+    @PutMapping("/inactiveStatus/{categoryId}")
+    public ProductCategoryResponseDto inactivateCategoryStatus(@PathVariable int categoryId) {
+        return categoryService.inactivateCategoryStatus(categoryId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_Manager')")
+    @PutMapping("/activeStatus/{categoryId}")
+    public ProductCategoryResponseDto activateCategoryStatus(@PathVariable int categoryId) {
+        return categoryService.activateCategoryStatus(categoryId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{categoryId}")
-    public String removeCategory(@PathVariable int categoryId) {
+    public ProductCategoryResponseDto removeCategory(@PathVariable int categoryId) {
         return categoryService.removeCategory(categoryId);
     }
 

@@ -40,8 +40,8 @@ public class ProductCategory {
     @Column(name = "last_update")
     private LocalDateTime updatedAt;
 
-    public ProductCategory(int id, String categoryName) {
-        this.id = id;
+    public ProductCategory(String categoryName) {
         this.categoryName = categoryName;
     }
+
 }

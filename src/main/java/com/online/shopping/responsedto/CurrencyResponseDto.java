@@ -13,4 +13,6 @@ public class CurrencyResponseDto {
 
     String symbol;
 
+    String country;
+
 }

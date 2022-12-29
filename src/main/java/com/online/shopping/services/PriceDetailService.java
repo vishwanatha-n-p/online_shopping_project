@@ -46,23 +46,23 @@ public class PriceDetailService {
     public PriceDetailResponseDto addPriceDetail(PriceDetailRequestDto priceDetailRequestDto) {
         Optional<Product> product = productRepository.findById(priceDetailRequestDto.getProductId());
         if (product.isPresent()) {
-            Optional<PriceDetail> priceDetail = priceDetailRepository.findById(priceDetailRequestDto.getId());
+            Optional<PriceDetail> priceDetail = priceDetailRepository.findPriceDetail(priceDetailRequestDto.getPrice(), priceDetailRequestDto.getDiscount(), priceDetailRequestDto.getSpecialOfferDiscount(), priceDetailRequestDto.getDeliveryCharge(), priceDetailRequestDto.getFinalPrice(), priceDetailRequestDto.getProductId(), priceDetailRequestDto.getSellerName(), priceDetailRequestDto.getCurrencyId());
             if (!priceDetail.isPresent()) {
                 PriceDetail priceDetailRequest = priceDetailMapper.convertDtoToEntity(priceDetailRequestDto);
                 priceDetailRequest.setCurrency(currencyRepository.findById(priceDetailRequestDto.getCurrencyId()).orElseThrow(() -> new CurrencyNotFoundException(ErrorConstants.CURRENCY_NOT_EXIST_ERROR)));
                 priceDetailRequest.setProduct(product.get());
                 return priceDetailMapper.convertEntityToDto(priceDetailRepository.save(priceDetailRequest));
-            } else {
-                return priceDetailMapper.convertEntityToDto(priceDetailRepository.save(priceDetail.get()));
             }
+            throw new PriceDetailNotFoundException(ErrorConstants.PRICE_DETAILS_EXIST_ERROR);
         } else {
             throw new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_EXIST_ERROR);
         }
     }
 
-    public String removePriceDetail(int priceDetailId) {
-        priceDetailRepository.delete(priceDetailRepository.findById(priceDetailId).orElseThrow(() -> new PriceDetailNotFoundException(ErrorConstants.PRICE_DETAILS_NOT_FOUND_ERROR + priceDetailId)));
-        return "Successfully deleted the Price details where id:" + priceDetailId;
+    public PriceDetailResponseDto removePriceDetail(int priceDetailId) {
+        PriceDetail priceDetail = priceDetailRepository.findById(priceDetailId).orElseThrow(() -> new PriceDetailNotFoundException(ErrorConstants.PRICE_DETAILS_NOT_FOUND_ERROR + priceDetailId));
+        priceDetailRepository.delete(priceDetail);
+        return priceDetailMapper.convertEntityToDto(priceDetail);
     }
 
     public List<PriceDetailResponseDto> getProductPriceDetail(int productId) {

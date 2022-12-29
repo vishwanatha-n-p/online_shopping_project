@@ -15,10 +15,7 @@ public interface CartListRepository extends JpaRepository<CartList, Integer> {
 
     Optional<CartList> findByUserId(int userId);
 
-    @Query(nativeQuery = true, value = "select clp.product_id from cart_list_product as clp where clp.cart_list_id in (select cl.id from cart_list as cl where cl.user_id= :user_id)")
+    @Query(nativeQuery = true, value = "SELECT product_id FROM cart_list_product WHERE cart_list_id IN (SELECT id FROM cart_list WHERE user_id= :user_id)")
     List<Integer> findAllProductIdByUserId(@Param("user_id") int userId);
-
-    @Query(nativeQuery = true, value = "select * from cart_list_product as clp where clp.cart_list_id in (select cl.id from cart_list as cl where cl.user_id= :user_id)")
-    List<Product> findProductByCartListId(@Param("user_id") int userId);
 
 }

@@ -33,4 +33,5 @@ public class PaymentMode {
     public PaymentMode(String modeName) {
         this.modeName = modeName;
     }
+
 }

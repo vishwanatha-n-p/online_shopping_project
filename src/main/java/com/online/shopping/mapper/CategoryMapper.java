@@ -1,8 +1,8 @@
 package com.online.shopping.mapper;
 
-import com.online.shopping.responsedto.ProductCategoryResponseDto;
-import com.online.shopping.requestdto.ProductCategoryRequestDto;
 import com.online.shopping.entity.ProductCategory;
+import com.online.shopping.requestdto.ProductCategoryRequestDto;
+import com.online.shopping.responsedto.ProductCategoryResponseDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class CategoryMapper {
     private ModelMapper mapper;
 
     public ProductCategory convertDtoToEntity(ProductCategoryRequestDto productCategoryDto) {
-        return mapper.map(productCategoryDto, ProductCategory.class);
+        return new ProductCategory(productCategoryDto.getCategoryName());
     }
 
     public ProductCategoryResponseDto convertEntityToDto(ProductCategory productCategory) {

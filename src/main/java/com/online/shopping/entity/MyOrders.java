@@ -33,24 +33,20 @@ public class MyOrders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(name = "product_name")
     private String productName;
-
-    @Column(name = "color")
-    private String color;
 
     @Column(name = "model_number")
     private String modelNumber;
 
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "color")
+    private String color;
 
     @Column(name = "total_price")
     private long totalPrice;
+
+    @Column(name = "quantity")
+    private int quantity;
 
     @Column(name = "order_status")
     private OrderStatus orderStatus;
@@ -58,8 +54,12 @@ public class MyOrders {
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @UpdateTimestamp
-    @Column(name = "last_update")
+    @Column(name = "last_updated")
     private LocalDateTime lastUpdate;
 
     public MyOrders(String productName, String color, int quantity, long totalPrice, LocalDateTime orderDate) {

@@ -33,7 +33,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{userId}")
-    public String removeUser(@PathVariable int userId) {
+    public UserResponseDto removeUser(@PathVariable int userId) {
         return userService.removeUser(userId);
     }
 
