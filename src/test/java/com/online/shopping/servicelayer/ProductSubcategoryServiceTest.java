@@ -63,8 +63,8 @@ public class ProductSubcategoryServiceTest {
     @Test
     public void test_removeSubcategory() {
         int subcategoryId = 6;
-        ProductSubcategoryResponseDto subcategory = productSubcategoryService.removeSubcategory(subcategoryId);
-        assertThat(subcategory).isNotNull();
+        ProductSubcategoryResponseDto productSubcategory = productSubcategoryService.removeSubcategory(subcategoryId);
+        assertEquals(subcategoryId, productSubcategory.getId());
     }
 
 }

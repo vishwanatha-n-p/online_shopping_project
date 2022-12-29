@@ -64,7 +64,7 @@ public class ProductTypeServiceTest {
     public void test_removeProductType() {
         int productTypeId = 6;
         ProductTypeResponseDto productType = productTypeService.removeProductType(productTypeId);
-        assertThat(productType).isNotNull();
+        assertEquals(productTypeId, productType.getId());
     }
 
 }

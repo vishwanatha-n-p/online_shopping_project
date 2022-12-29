@@ -55,7 +55,7 @@ public class PriceDetailServiceTest {
     public void test_removePriceDetail() {
         int priceDetailId = 7;
         PriceDetailResponseDto priceDetail = priceDetailService.removePriceDetail(priceDetailId);
-        assertThat(priceDetail).isNotNull();
+        assertEquals(priceDetailId, priceDetail.getId());
     }
 
 }

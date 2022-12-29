@@ -53,7 +53,7 @@ public class ProductOrderServiceTest {
     public void test_removeProductOrder() {
         int productOrderId = 12;
         ProductOrderResponseDto productOrder = productOrderService.removeProductOrder(productOrderId);
-        assertThat(productOrder).isNotNull();
+        assertEquals(productOrderId, productOrder.getId());
     }
 
 }
