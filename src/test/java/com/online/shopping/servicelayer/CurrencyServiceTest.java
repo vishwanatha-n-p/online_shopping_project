@@ -42,7 +42,7 @@ public class CurrencyServiceTest {
     public void test_removeCurrency() {
         int currencyId = 2;
         CurrencyResponseDto currencyResponse = currencyService.removeCurrency(currencyId);
-        assertThat(currencyResponse).isNotNull();
+        assertEquals(currencyId, currencyResponse.getId());
     }
 
 }

@@ -25,7 +25,7 @@ public class CurrencyService {
     private CurrencyMapper currencyMapper;
 
     public CurrencyResponseDto addCurrency(CurrencyRequestDto currencyRequestDto) {
-        Optional<Currency> currency = currencyRepository.findById(currencyRequestDto.getId());
+        Optional<Currency> currency = currencyRepository.findByCountry(currencyRequestDto.getCountry());
         if (!currency.isPresent()) {
             return currencyMapper.convertEntityToDto(currencyRepository.save(currencyMapper.convertDtoToEntity(currencyRequestDto)));
         }

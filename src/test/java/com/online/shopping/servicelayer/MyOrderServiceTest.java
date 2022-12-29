@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class MyOrderServiceTest {
@@ -34,7 +35,7 @@ public class MyOrderServiceTest {
     public void test_getSingleMyOrder() {
         int myOrderId = 2;
         MyOrderResponseDto myOrder = myOrderService.getSingleMyOrder(myOrderId);
-        assertThat(myOrder).isNotNull();
+        assertEquals(myOrderId, myOrder.getId());
     }
 
     @Test
@@ -48,7 +49,7 @@ public class MyOrderServiceTest {
     public void test_removeSingleMyOrder() {
         int myOrderId = 3;
         MyOrderResponseDto myOrderResponse = myOrderService.removeSingleMyOrder(myOrderId);
-        assertThat(myOrderResponse).isNotNull();
+        assertEquals(myOrderId, myOrderResponse.getId());
     }
 
 }

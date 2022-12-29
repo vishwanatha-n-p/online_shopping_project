@@ -36,14 +36,15 @@ public class PaymentServiceTest {
     public void test_getSinglePayment() {
         int paymentId = 2;
         PaymentResponseDto paymentResponse = paymentService.getSinglePayment(paymentId);
-        assertThat(paymentResponse).isNotNull();
+        assertEquals(paymentId, paymentResponse.getId());
     }
 
     @Test
     public void test_removePayment() {
         int paymentId = 2;
         PaymentResponseDto payment = paymentService.removePayment(paymentId);
-        assertThat(payment).isNotNull();
+        assertEquals(paymentId, payment.getId());
+
     }
 
 }

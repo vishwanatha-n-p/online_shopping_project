@@ -43,7 +43,7 @@ public class UserServiceTest {
     public void test_removeUser() {
         int userId = 11;
         UserResponseDto userResponse = userService.removeUser(userId);
-        assertThat(userResponse).isNotNull();
+        assertEquals(userId, userResponse.getId());
     }
 
 }

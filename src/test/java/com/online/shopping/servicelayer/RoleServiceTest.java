@@ -41,8 +41,8 @@ public class RoleServiceTest {
     @Test
     public void test_removeRole() {
         int roleId = 4;
-        RoleResponseDto role = roleService.removeRole(roleId);
-        assertThat(role).isNotNull();
+        RoleResponseDto roleResponse = roleService.removeRole(roleId);
+        assertEquals(roleId, roleResponse.getId());
     }
 
 }

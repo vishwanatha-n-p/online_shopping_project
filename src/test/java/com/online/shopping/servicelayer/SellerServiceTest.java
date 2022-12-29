@@ -45,8 +45,8 @@ public class SellerServiceTest {
     @Test
     public void test_removeSeller() {
         int sellerId = 3;
-        SellerResponseDto seller = sellerService.removeSeller(sellerId);
-        assertThat(seller).isNotNull();
+        SellerResponseDto sellerResponse = sellerService.removeSeller(sellerId);
+        assertEquals(sellerId, sellerResponse.getId());
     }
 
 }

@@ -42,7 +42,7 @@ public class PaymentModeServiceTest {
     public void test_removePaymentMode() {
         int paymentModeId = 4;
         PaymentModeResponseDto paymentMode = paymentModeService.removePaymentMode(paymentModeId);
-        assertThat(paymentMode).isNotNull();
+        assertEquals(paymentModeId, paymentMode.getId());
     }
 
 }

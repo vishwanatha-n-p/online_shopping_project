@@ -56,7 +56,7 @@ public class ProductCategoryServiceTest {
     public void test_removeCategory() {
         int productCategoryId = 1;
         ProductCategoryResponseDto productCategory = productCategoryService.removeCategory(productCategoryId);
-        assertThat(productCategory).isNotNull();
+        assertEquals(productCategoryId, productCategory.getId());
     }
 
 }

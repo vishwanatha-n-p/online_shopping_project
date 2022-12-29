@@ -26,8 +26,8 @@ public class FinalOrderServiceTest {
 
     @Test
     public void test_cancelFinalOrder() {
-        int finalOrderId = 5;
-        String securityToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJWaWthcyIsImV4cCI6MTY3MjI0ODc4NywiaWF0IjoxNjcyMjMwNzg3fQ.Ss5NBikVjWvUc6OPM-8pXrPHTSrVwZ_fGSy8wFzhlAsH42_3NFvhyfqg11V5ZCblO9ZKSXa0Yww-nSgtVBMwsQ";
+        int finalOrderId = 2;
+        String securityToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJWaXJhdCIsImV4cCI6MTY3MjMzNDcxMCwiaWF0IjoxNjcyMzE2NzEwfQ.V2ifYWI1G8XCV0S6rTnsiDwVGsEmYX0VM_Tpl-qkyYM9D_DSExdS-A3YWZKxwkpEwy51mLo4481WT6qdJBkjtA";
         MyOrderResponseDto myOrderResponse = finalOrderService.cancelFinalOrder(finalOrderId, securityToken);
         assertThat(myOrderResponse).isNotNull();
     }
