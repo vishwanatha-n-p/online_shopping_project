@@ -9,7 +9,7 @@ import com.online.shopping.enums.ProductStatus;
 import com.online.shopping.exception.ProductNotFoundException;
 import com.online.shopping.exception.ProductTypeNotFoundException;
 import com.online.shopping.exception.SellerNotFoundException;
-import com.online.shopping.mapper.HighlightsMapper;
+import com.online.shopping.general.Validate;
 import com.online.shopping.mapper.PriceDetailMapper;
 import com.online.shopping.mapper.ProductMapper;
 import com.online.shopping.repository.HighlightsRepository;
@@ -26,7 +26,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,16 +42,13 @@ public class ProductService {
     private HighlightsRepository highlightsRepository;
 
     @Autowired
-    private HighlightsService highlightsService;
-
-    @Autowired
     private ProductTypeRepository productTypeRepository;
 
     @Autowired
     private SellerRepository sellerRepository;
 
     @Autowired
-    private HighlightsMapper highlightsMapper;
+    private Validate validate;
 
     @Autowired
     private PriceDetailRepository priceDetailRepository;
@@ -59,24 +56,30 @@ public class ProductService {
     @Autowired
     private PriceDetailMapper priceDetailMapper;
 
-    public ProductResponseDto addProduct(int sellerId, ProductRequestDto productRequestDto) {
+    public ProductResponseDto addProduct(String authorization, ProductRequestDto productRequestDto) {
+        Seller sellerResponse = sellerRepository.findByUserId(validate.getUserId(authorization)).orElse(null);
+        if (Objects.isNull(sellerResponse)) {
+            throw new SellerNotFoundException(ErrorConstants.SELLER_NOT_EXIST_ERROR);
+        }
+        int sellerId = sellerResponse.getId();
         Product product = sellerRepository.findById(sellerId).map(seller -> {
-            int productId = productRequestDto.getId();
-            if (validateSellerProduct(seller, productId)) {
-                throw new ProductNotFoundException(ErrorConstants.PRODUCT_EXIST_ERROR);
-            }
-            if (productId != 0) {
-                Product productResponse = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_FOUND_ERROR + productId));
-                productResponse.setProductCount(productResponse.getProductCount() + productRequestDto.getProductCount());
-                productResponse.setStatus(ProductStatus.AVAILABLE);
+            Product obtainedProduct = productRepository.findProduct(productRequestDto.getProductName(), productRequestDto.getProductTypeId(), productRequestDto.getColor()).orElse(null);
+            if (Objects.nonNull(obtainedProduct)) {
+                if (validateSellerProduct(seller, obtainedProduct.getId())) {
+                    throw new ProductNotFoundException(ErrorConstants.PRODUCT_EXIST_ERROR);
+                }
+                obtainedProduct.setProductCount(obtainedProduct.getProductCount() + productRequestDto.getProductCount());
+                obtainedProduct.setStatus(ProductStatus.AVAILABLE);
+                seller.addProductToSeller(obtainedProduct);
+                sellerRepository.save(seller);
+                return productRepository.save(obtainedProduct);
+            } else {
+                Product productResponse = this.saveProduct(productRequestDto);
                 seller.addProductToSeller(productResponse);
                 sellerRepository.save(seller);
-                return productRepository.save(productResponse);
+                return productResponse;
+
             }
-            Product productResponse = this.addProduct(productRequestDto);
-            seller.addProductToSeller(productResponse);
-            sellerRepository.save(seller);
-            return productResponse;
         }).orElseThrow(() -> new ProductNotFoundException(ErrorConstants.SELLER_NOT_FOUND_ERROR + sellerId));
         return productMapper.convertEntityToDto(product);
     }
@@ -85,13 +88,13 @@ public class ProductService {
         return seller.getProducts().stream().anyMatch(a -> a.getId() == productId);
     }
 
-    public Product addProduct(ProductRequestDto productRequestDto) {
+    public Product saveProduct(ProductRequestDto productRequestDto) {
         Highlights highlights = productRequestDto.getHighlights();
+        Highlights highlightsResponse = highlightsRepository.findHighlights(highlights.getModelNumber(), highlights.getFeatures(), highlights.getSize()).orElse(null);
         Product productRequest = productMapper.convertDtoToEntity(productRequestDto);
         productRequest.setStatus(ProductStatus.AVAILABLE);
-        if (highlights.getId() != 0) {
-            Optional<Highlights> highlights1 = highlightsRepository.findById(highlights.getId());
-            highlights1.ifPresent(h -> productRequest.setHighlights(h));
+        if (Objects.nonNull(highlightsResponse)) {
+            productRequest.setHighlights(highlightsResponse);
         } else {
             highlights.setUpdatedAt(LocalDateTime.now());
             productRequest.setHighlights(highlightsRepository.save(highlights));
@@ -118,59 +121,69 @@ public class ProductService {
         return priceDetailRepository.findAllByProductId(productId).stream().map(pd -> priceDetailMapper.convertEntityToDto(pd)).collect(Collectors.toList());
     }
 
-    public String deactivateProduct(int productId) {
+    public ProductResponseDto deactivateProduct(int productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_FOUND_ERROR + productId));
         List<Seller> sellers = sellerRepository.findSellersByProductsId(productId);
         if (sellers.isEmpty()) {
             product.setStatus(ProductStatus.INACTIVE);
-            return "Successfully deactivated the Product form Product list,\nSellers not found for given product id:" + productId;
+            productRepository.save(product);
+            return productMapper.convertEntityToDto(product);
         }
         product.setStatus(ProductStatus.INACTIVE);
-        return sellers.stream().map(s -> deactivateSellersProduct(s.getId(), productId)).collect(Collectors.toSet()).toString();
+        List<ProductResponseDto> result = sellers.stream().map(s -> deactivateSellersProduct(s.getId(), product)).collect(Collectors.toList());
+        productRepository.save(product);
+        return result.get(0);
     }
 
-    public String deactivateSellersProduct(int sellerId, int productId) {
+    public ProductResponseDto deactivateSellersProduct(int sellerId, Product product) {
         Seller seller = sellerRepository.findById(sellerId).orElseThrow(() -> new SellerNotFoundException(ErrorConstants.SELLER_NOT_EXIST_ERROR + sellerId));
-        seller.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.getId() == productId).forEach(a -> a.setStatus(ProductStatus.INACTIVE));
+        seller.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.hashCode() == product.hashCode() && p.equals(product)).forEach(a -> a.setStatus(ProductStatus.INACTIVE));
         sellerRepository.save(seller);
-        return "Successfully deactivated the Product form Seller product list, Where product id:" + productId;
+        return productMapper.convertEntityToDto(product);
     }
 
-    public String activateProduct(int productId) {
+    public ProductResponseDto activateProduct(int productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_FOUND_ERROR + productId));
         List<Seller> sellers = sellerRepository.findSellersByProductsId(productId);
         if (sellers.isEmpty()) {
             product.setStatus(ProductStatus.AVAILABLE);
-            return "Successfully activated the Product form Product list,\nSellers not found for given product id:" + productId;
+            productRepository.save(product);
+            return productMapper.convertEntityToDto(product);
         }
         product.setStatus(ProductStatus.AVAILABLE);
-        return sellers.stream().map(s -> activateSellersProduct(s.getId(), productId)).collect(Collectors.toSet()).toString();
+        List<ProductResponseDto> result = sellers.stream().map(s -> activateSellersProduct(s.getId(), product)).collect(Collectors.toList());
+        productRepository.save(product);
+        return result.get(0);
     }
 
-    public String activateSellersProduct(int sellerId, int productId) {
+    public ProductResponseDto activateSellersProduct(int sellerId, Product product) {
         Seller seller = sellerRepository.findById(sellerId).orElseThrow(() -> new SellerNotFoundException(ErrorConstants.SELLER_NOT_EXIST_ERROR + sellerId));
-        seller.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.getId() == productId).forEach(a -> a.setStatus(ProductStatus.AVAILABLE));
+        seller.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.hashCode() == product.hashCode() && p.equals(product)).forEach(a -> a.setStatus(ProductStatus.AVAILABLE));
         sellerRepository.save(seller);
-        return "Successfully deactivated the Product form Seller product list, Where product id:" + productId;
+        return productMapper.convertEntityToDto(product);
     }
 
-    public String deleteProduct(int productId) {
+    public ProductResponseDto deleteProduct(int productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_FOUND_ERROR + productId));
         List<Seller> sellers = sellerRepository.findSellersByProductsId(productId);
         if (sellers.isEmpty()) {
             productRepository.delete(product);
-            return "Successfully deleted the Product form Product list,\nSellers not found for id:" + productId;
+            return productMapper.convertEntityToDto(product);
         }
         sellers.stream().forEach(s -> deleteSellersProduct(s.getId(), productId));
         productRepository.delete(product);
-        return "Successfully deleted the Product form Product list and Seller product list, where product id:" + productId;
+        return productMapper.convertEntityToDto(product);
     }
 
-    public String deleteSellersProduct(int sellerId, int productId) {
+    public ProductResponseDto deleteSellersProduct(int sellerId, int productId) {
         Seller seller = sellerRepository.findById(sellerId).orElseThrow(() -> new SellerNotFoundException(ErrorConstants.SELLER_NOT_EXIST_ERROR + sellerId));
-        seller.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.getId() == productId).forEach(a -> seller.removeSellerProduct(a));
-        sellerRepository.save(seller);
-        return "Successfully deleted the Product form Seller product list, Where product id:" + productId;
+        List<Product> filteredProduct = seller.getProducts().stream().filter(p -> !ObjectUtils.isEmpty(p) && p.getId() == productId).collect(Collectors.toList());
+        if (!filteredProduct.isEmpty()) {
+            seller.removeSellerProduct(filteredProduct);
+            sellerRepository.save(seller);
+            return productMapper.convertEntityToDto(filteredProduct.get(0));
+        }
+        throw new ProductNotFoundException(ErrorConstants.PRODUCT_NOT_FOUND_IN_SELLER_ERROR);
     }
 
 }

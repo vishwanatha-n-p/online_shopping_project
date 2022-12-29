@@ -1,6 +1,5 @@
 package com.online.shopping.responsedto;
 
-import com.online.shopping.entity.Product;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Setter
 @Getter
@@ -35,7 +33,5 @@ public class SellerResponseDto {
     String country;
 
     LocalDateTime updatedAt;
-
-    List<Product> products;
 
 }

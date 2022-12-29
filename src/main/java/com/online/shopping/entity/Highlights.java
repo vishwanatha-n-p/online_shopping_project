@@ -38,12 +38,18 @@ public class Highlights {
     @Column(name = "size")
     private String size;
 
-
     @UpdateTimestamp
     @Column(name = "last_update")
     private LocalDateTime updatedAt;
 
     public Highlights(String modelNumber, String features, String size) {
+        this.modelNumber = modelNumber;
+        this.features = features;
+        this.size = size;
+    }
+
+    public Highlights(int id, String modelNumber, String features, String size) {
+        this.id = id;
         this.modelNumber = modelNumber;
         this.features = features;
         this.size = size;

@@ -22,4 +22,8 @@ public class ProductTypeRequestDto {
     @Positive(message = "Enter valid product subcategory id")
     private Integer subcategoryId;
 
+    public ProductTypeRequestDto(String productType, Integer subcategoryId) {
+        this.productType = productType;
+        this.subcategoryId = subcategoryId;
+    }
 }

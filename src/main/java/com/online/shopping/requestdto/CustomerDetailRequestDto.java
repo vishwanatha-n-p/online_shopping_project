@@ -30,4 +30,11 @@ public class CustomerDetailRequestDto {
     @Length(min = 12, max = 12, message = "Enter 12 number contact includes country code")
     private String contactNumber;
 
+    public CustomerDetailRequestDto(String firstName, String lastName, String email, String contactNumber) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.contactNumber = contactNumber;
+    }
+
 }

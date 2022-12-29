@@ -19,4 +19,8 @@ public class PaymentRequestDto {
     @NotEmpty(message = "Enter Payment mode")
     String paymentModeName;
 
+    public PaymentRequestDto(String paymentModeName) {
+        this.paymentModeName = paymentModeName;
+    }
+
 }

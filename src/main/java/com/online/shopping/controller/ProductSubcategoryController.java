@@ -1,6 +1,6 @@
 package com.online.shopping.controller;
 
-import com.online.shopping.requestdto.SubcategoryRequestDto;
+import com.online.shopping.requestdto.ProductSubcategoryRequestDto;
 import com.online.shopping.responsedto.ProductSubcategoryResponseDto;
 import com.online.shopping.services.ProductSubcategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,19 +44,25 @@ public class ProductSubcategoryController {
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @PostMapping
-    public ProductSubcategoryResponseDto addSubcategory(@Valid @RequestBody SubcategoryRequestDto subcategoryDto) {
+    public ProductSubcategoryResponseDto addSubcategory(@Valid @RequestBody ProductSubcategoryRequestDto subcategoryDto) {
         return subcategoryService.addSubcategory(subcategoryDto);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
-    @PutMapping("/updateStatus/{subcategoryId}")
-    public ProductSubcategoryResponseDto updateSubcategoryStatus(@PathVariable int subcategoryId) {
-        return subcategoryService.updateSubcategoryStatus(subcategoryId);
+    @PutMapping("/inactivateStatus/{subcategoryId}")
+    public ProductSubcategoryResponseDto inactivateSubcategoryStatus(@PathVariable int subcategoryId) {
+        return subcategoryService.inactivateSubcategoryStatus(subcategoryId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_Manager')")
+    @PutMapping("/activateStatus/{subcategoryId}")
+    public ProductSubcategoryResponseDto activateSubcategoryStatus(@PathVariable int subcategoryId) {
+        return subcategoryService.activateSubcategoryStatus(subcategoryId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{subcategoryId}")
-    public String removeSubcategory(@PathVariable int subcategoryId) {
+    public ProductSubcategoryResponseDto removeSubcategory(@PathVariable int subcategoryId) {
         return subcategoryService.removeSubcategory(subcategoryId);
     }
 

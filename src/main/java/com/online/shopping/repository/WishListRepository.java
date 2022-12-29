@@ -1,6 +1,5 @@
 package com.online.shopping.repository;
 
-import com.online.shopping.entity.Product;
 import com.online.shopping.entity.WishList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,10 +14,7 @@ public interface WishListRepository extends JpaRepository<WishList, Integer> {
 
     Optional<WishList> findByUserId(int userId);
 
-    @Query(nativeQuery = true, value = "select wp.product_id from wishlist_product as wp where wp.wishlist_id in (select wl.id from wishlist as wl where wl.user_id = :user_id)")
+    @Query(nativeQuery = true, value = "SELECT product_id FROM wishlist_product WHERE wishlist_id IN (SELECT id FROM wishlist WHERE user_id = :user_id)")
     List<Integer> findAllProductIdByUserId(@Param("user_id") int userId);
-
-    @Query(nativeQuery = true, value = "select * from wishlist_product as wp where wp.wishlist_id in (select wl.id from wishlist as wl where wl.user_id = :user_id)")
-    List<Product> findProductByWishListId(@Param("user_id") int userId);
 
 }

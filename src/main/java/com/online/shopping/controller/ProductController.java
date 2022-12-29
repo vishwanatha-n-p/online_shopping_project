@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,11 +26,10 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
     @PreAuthorize("hasRole('ROLE_Seller')")
     @PostMapping("/sellers/{sellerId}")
-    public ProductResponseDto addProduct(@Valid @PathVariable int sellerId, @RequestBody ProductRequestDto productRequestDto) {
-        return productService.addProduct(sellerId, productRequestDto);
+    public ProductResponseDto addProduct(@Valid @RequestHeader String authorization, @RequestBody ProductRequestDto productRequestDto) {
+        return productService.addProduct(authorization, productRequestDto);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
@@ -58,25 +58,25 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @PutMapping("/deactivate/{productId}")
-    public String deactivateProduct(@PathVariable int productId) {
+    public ProductResponseDto deactivateProduct(@PathVariable int productId) {
         return productService.deactivateProduct(productId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @PutMapping("/activate/{productId}")
-    public String activateProduct(@PathVariable int productId) {
+    public ProductResponseDto activateProduct(@PathVariable int productId) {
         return productService.activateProduct(productId);
     }
 
-    @PreAuthorize("hasRole('ROLE_Seller')")
+    @PreAuthorize("hasRole('ROLE_Seller') or hasRole('ROLE_Manager')")
     @DeleteMapping("/{productId}")
-    public String deleteProduct(@PathVariable int productId) {
+    public ProductResponseDto deleteProduct(@PathVariable int productId) {
         return productService.deleteProduct(productId);
     }
 
-    @PreAuthorize("hasRole('ROLE_Seller')")
+    @PreAuthorize("hasRole('ROLE_Manager') or hasRole('ROLE_Manager')")
     @DeleteMapping("/{productId}/sellers/{sellerId}")
-    public String deleteProduct(@PathVariable int sellerId, @PathVariable int productId) {
+    public ProductResponseDto deleteProduct(@PathVariable int sellerId, @PathVariable int productId) {
         return productService.deleteSellersProduct(sellerId, productId);
     }
 

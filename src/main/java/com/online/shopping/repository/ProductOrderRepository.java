@@ -14,9 +14,10 @@ public interface ProductOrderRepository extends JpaRepository<ProductOrder, Inte
 
     List<ProductOrder> findAllByUserId(int userId);
 
-    Optional<ProductOrder> findByProductIdAndUserId(int productId, int userId);
+    @Query(nativeQuery = true, value = "SELECT * FROM product_order WHERE product_id= :product_id AND user_id= :user_id")
+    Optional<ProductOrder> findByProductIdAndUserId(@Param("product_id")int productId, @Param("user_id") int userId);
 
-    @Query(nativeQuery = true, value = "select sum(cost) from product_order as po where po.user_id = :user_id")
+    @Query(nativeQuery = true, value = "SELECT sum(cost) FROM product_order WHERE user_id= :user_id")
     long findCostSumByUserId(@Param("user_id") int userId);
 
 }

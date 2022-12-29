@@ -10,7 +10,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -47,6 +46,16 @@ public class PriceDetailRequestDto {
     @Positive
     Long finalPrice;
 
-    LocalDateTime updatedAt;
-
+    public PriceDetailRequestDto(Integer productId, String sellerName, Integer currencyId, Long price, int availabilityCount, String discount,
+                                 int specialOfferDiscount, int deliveryCharge, Long finalPrice) {
+        this.productId = productId;
+        this.sellerName = sellerName;
+        this.currencyId = currencyId;
+        this.price = price;
+        this.availabilityCount = availabilityCount;
+        this.discount = discount;
+        this.specialOfferDiscount = specialOfferDiscount;
+        this.deliveryCharge = deliveryCharge;
+        this.finalPrice = finalPrice;
+    }
 }

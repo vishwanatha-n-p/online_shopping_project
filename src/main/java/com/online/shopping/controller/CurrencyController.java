@@ -1,6 +1,5 @@
 package com.online.shopping.controller;
 
-import com.online.shopping.entity.Currency;
 import com.online.shopping.requestdto.CurrencyRequestDto;
 import com.online.shopping.responsedto.CurrencyResponseDto;
 import com.online.shopping.services.CurrencyService;
@@ -33,17 +32,17 @@ public class CurrencyController {
     @PreAuthorize("hasRole('ROLE_Manager')")
     @GetMapping
     public List<CurrencyResponseDto> getCurrency() {
-        return currencyService.getCurrency();
+        return currencyService.getAllCurrency();
     }
 
     @GetMapping("/{currencyId}")
-    public Currency getSingleCurrency(@PathVariable int currencyId) {
+    public CurrencyResponseDto getSingleCurrency(@PathVariable int currencyId) {
         return currencyService.getSingleCurrency(currencyId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{currencyId}")
-    public String removeCurrency(@PathVariable int currencyId) {
+    public CurrencyResponseDto removeCurrency(@PathVariable int currencyId) {
         return currencyService.removeCurrency(currencyId);
     }
 

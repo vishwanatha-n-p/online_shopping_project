@@ -10,7 +10,7 @@ import javax.validation.constraints.Positive;
 @Setter
 @Getter
 @NoArgsConstructor
-public class SubcategoryRequestDto {
+public class ProductSubcategoryRequestDto {
 
     private int id;
 
@@ -21,4 +21,8 @@ public class SubcategoryRequestDto {
     @Positive(message = "Enter valid product category id")
     private Integer categoryId;
 
+    public ProductSubcategoryRequestDto(String subcategoryName, int categoryId) {
+        this.subcategoryName = subcategoryName;
+        this.categoryId = categoryId;
+    }
 }

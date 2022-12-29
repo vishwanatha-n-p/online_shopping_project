@@ -1,5 +1,6 @@
 package com.online.shopping.services;
 
+import com.online.shopping.constants.ErrorConstants;
 import com.online.shopping.entity.Address;
 import com.online.shopping.entity.CustomerDetail;
 import com.online.shopping.exception.AddressNotFoundException;
@@ -34,7 +35,7 @@ public class AddressService {
     private Validate validate;
 
     public AddressResponseDto addAddress(AddressRequestDto addressRequestDto, String authorization) {
-        CustomerDetail customerDetail = customerDetailRepository.findLastCustomerDetailByUserId(validate.getUserId(authorization));
+        CustomerDetail customerDetail = customerDetailRepository.findLastCustomerDetailByUserId(validate.getUserId(authorization)).orElse(null);
         if (Objects.nonNull(customerDetail)) {
             Optional<Address> address = addressRepository.findByStreetAndCityAndState(addressRequestDto.getStreet(), addressRequestDto.getCity(), addressRequestDto.getState());
             if (!address.isPresent()) {
@@ -48,7 +49,7 @@ public class AddressService {
             customerDetailRepository.save(customerDetail);
             return addressMapper.convertEntityToDto(addressRepository.save(address.get()));
         }
-        throw new CustomerDetailNotFoundException("Customer detail not exist to save shipping address");
+        throw new CustomerDetailNotFoundException(ErrorConstants.CUSTOMER_DETAIL_NOT_EXIST_ERROR);
     }
 
     public List<AddressResponseDto> getAllAddress() {
@@ -56,22 +57,23 @@ public class AddressService {
     }
 
     public List<AddressResponseDto> getCustomerAddress(String authorization) {
-        CustomerDetail customerDetail = customerDetailRepository.findLastCustomerDetailByUserId(validate.getUserId(authorization));
+        CustomerDetail customerDetail = customerDetailRepository.findLastCustomerDetailByUserId(validate.getUserId(authorization)).orElse(null);
         if (Objects.nonNull(customerDetail)) {
             List<Address> addressesResponse = customerDetail.retrieveAddresses();
             return addressesResponse.stream().map(address -> addressMapper.convertEntityToDto(address)).collect(Collectors.toList());
         }
-        throw new CustomerDetailNotFoundException("Customer detail not found");
+        throw new CustomerDetailNotFoundException(ErrorConstants.CUSTOMER_DETAIL_NOT_EXIST_ERROR);
     }
 
     public AddressResponseDto getSingleAddress(int addressId) {
-        Address address = addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException("Address not found for id: " + addressId));
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException(ErrorConstants.ADDRESS_NOT_FOUND_ERROR + addressId));
         return addressMapper.convertEntityToDto(address);
     }
 
-    public String removeAddress(int addressId) {
-        addressRepository.delete(addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException("Address not found for id: " + addressId)));
-        return "Successfully deleted Address where id: " + addressId;
+    public AddressResponseDto removeAddress(int addressId) {
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new AddressNotFoundException(ErrorConstants.ADDRESS_NOT_FOUND_ERROR + addressId));
+        addressRepository.delete(address);
+        return addressMapper.convertEntityToDto(address);
     }
 
 }

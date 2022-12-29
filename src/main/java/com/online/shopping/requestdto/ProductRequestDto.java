@@ -35,4 +35,12 @@ public class ProductRequestDto {
     @Min(value = 1, message = "Enter product count")
     Integer productCount;
 
+    public ProductRequestDto(String productName, int productTypeId, String color, Highlights highlights, Integer productCount) {
+        this.productName = productName;
+        this.productTypeId = productTypeId;
+        this.color = color;
+        this.highlights = highlights;
+        this.productCount = productCount;
+    }
+
 }

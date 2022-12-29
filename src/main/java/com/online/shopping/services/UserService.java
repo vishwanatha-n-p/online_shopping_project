@@ -11,6 +11,7 @@ import com.online.shopping.repository.UserRepository;
 import com.online.shopping.requestdto.UserRequestDto;
 import com.online.shopping.responsedto.UserResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,10 +52,14 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
-    public String removeUser(int userId) {
+    public UserResponseDto removeUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(ErrorConstants.USER_NOT_FOUND_ERROR + userId));
-        userRepository.delete(user);
-        return "Successfully deleted the User where User id:" + userId;
+        try {
+            userRepository.delete(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(ErrorConstants.USER_ALREADY_USED_ERROR);
+        }
+        return userMapper.convertEntityToDto(user);
     }
 
 }

@@ -50,7 +50,7 @@ public class AddressController {
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{addressId}")
-    public String removeAddress(@PathVariable int addressId) {
+    public AddressResponseDto removeAddress(@PathVariable int addressId) {
         return addressService.removeAddress(addressId);
     }
 

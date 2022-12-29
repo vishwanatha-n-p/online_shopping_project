@@ -19,4 +19,9 @@ public class CurrencyRequestDto {
     @NotEmpty(message = "Enter currency code")
     String currencyCode;
 
+    public CurrencyRequestDto(String country, String currencyCode) {
+        this.country = country;
+        this.currencyCode = currencyCode;
+    }
+
 }

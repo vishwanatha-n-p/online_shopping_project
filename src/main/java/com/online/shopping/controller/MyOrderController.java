@@ -47,7 +47,7 @@ public class MyOrderController {
 
     @PreAuthorize("hasRole('ROLE_Manager')")
     @DeleteMapping("/{myOrderId}")
-    public String removeSingleMyOrder(@PathVariable int myOrderId){
+    public MyOrderResponseDto removeSingleMyOrder(@PathVariable int myOrderId){
         return myOrderService.removeSingleMyOrder(myOrderId);
     }
 

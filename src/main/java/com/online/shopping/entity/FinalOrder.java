@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 public class FinalOrder {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "order_number")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 

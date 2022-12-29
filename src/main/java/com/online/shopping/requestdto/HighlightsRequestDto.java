@@ -25,4 +25,10 @@ public class HighlightsRequestDto {
     @NotEmpty(message = "Enter product size")
     String size;
 
+    public HighlightsRequestDto(String modelNumber, String features, String size) {
+        this.modelNumber = modelNumber;
+        this.features = features;
+        this.size = size;
+    }
+
 }

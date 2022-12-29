@@ -8,6 +8,7 @@ import com.online.shopping.repository.HighlightsRepository;
 import com.online.shopping.requestdto.HighlightsRequestDto;
 import com.online.shopping.responsedto.HighlightsResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,9 +38,14 @@ public class HighlightsService {
         return highlightsMapper.convertEntityToDto(highlightResponse);
     }
 
-    public String removeHighlights(int highlightId) {
-        highlightsRepository.delete(highlightsRepository.findById(highlightId).orElseThrow(() -> new HighlightsNotFoundException(ErrorConstants.HIGHLIGHTS_NOT_FOUND_ERROR + highlightId)));
-        return "Successfully deleted the Product highlights where id:" + highlightId;
+    public HighlightsResponseDto removeHighlights(int highlightId) {
+        Highlights highlights = highlightsRepository.findById(highlightId).orElseThrow(() -> new HighlightsNotFoundException(ErrorConstants.HIGHLIGHTS_NOT_FOUND_ERROR + highlightId));
+        try {
+            highlightsRepository.delete(highlights);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(ErrorConstants.HIGHLIGHTS_ALREADY_USED_ERROR);
+        }
+        return highlightsMapper.convertEntityToDto(highlights);
     }
 
 }

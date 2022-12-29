@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +50,7 @@ public class MyOrderService {
     @Autowired
     private PriceDetailMapper priceDetailMapper;
 
-    public void saveMyOrder(FinalOrder finalOrder, String authorization, OrderStatus status) {
+    public MyOrderResponseDto saveCancelledOrder(FinalOrder finalOrder, String authorization, OrderStatus status) {
         User user = userRepository.findById(validate.getUserId(authorization)).orElse(null);
         Product product = finalOrder.getProduct();
         String modelNumber = highlightsRepository.findModelNumberById(product.getHighlights().getId());
@@ -59,7 +58,19 @@ public class MyOrderService {
         myOrder.setModelNumber(modelNumber);
         myOrder.setUser(user);
         myOrder.setOrderStatus(status);
-        myOrderRepository.save(myOrder);
+        return myOrderMapper.convertEntityToDto(myOrderRepository.save(myOrder));
+    }
+
+    public MyOrderResponseDto saveDeliverOrder(FinalOrder finalOrder, OrderStatus status) {
+        int userId = finalOrder.getPayment().getCustomerDetail().getUser().getId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorConstants.USER_NOT_FOUND_ERROR));
+        Product product = finalOrder.getProduct();
+        String modelNumber = highlightsRepository.findModelNumberById(product.getHighlights().getId());
+        MyOrders myOrder = myOrderMapper.convertFinalOrderToMyOrder(finalOrder, product);
+        myOrder.setModelNumber(modelNumber);
+        myOrder.setUser(user);
+        myOrder.setOrderStatus(status);
+        return myOrderMapper.convertEntityToDto(myOrderRepository.save(myOrder));
     }
 
     public List<MyOrderResponseDto> getAllCustomerMyOrders() {
@@ -71,26 +82,20 @@ public class MyOrderService {
     }
 
     public MyOrderResponseDto getSingleMyOrder(int myOrderId) throws GeneralException {
-        MyOrders myOrders = myOrderRepository.findById(myOrderId).orElse(null);
-        if (!Objects.nonNull(myOrders)) {
-            throw new GeneralException(ErrorConstants.MY_ORDER_NOT_FOUND_ERROR + myOrderId);
-        }
-        return myOrderMapper.convertEntityToDto(myOrders);
+        MyOrders myOrder = myOrderRepository.findById(myOrderId).orElseThrow(() -> new GeneralException(ErrorConstants.USER_NOT_FOUND_ERROR));
+        return myOrderMapper.convertEntityToDto(myOrder);
     }
 
     public List<PriceDetailResponseDto> getProductPresentDetails(int myOrderId) {
-        String productName = myOrderRepository.findProductNameById(myOrderId);
-        int productId = productRepository.findIdByProductName(productName);
-        return priceDetailRepository.findAllByProductId(productId).stream().map(priceDetail -> priceDetailMapper.convertEntityToDto(priceDetail)).collect(Collectors.toList());
+        MyOrders myOrder = myOrderRepository.findProductNameById(myOrderId);
+        Product product = productRepository.findIdByProductName(myOrder.getProductName());
+        return priceDetailRepository.findAllByProductId(product.getId()).stream().map(priceDetail -> priceDetailMapper.convertEntityToDto(priceDetail)).collect(Collectors.toList());
     }
 
-    public String removeSingleMyOrder(int myOrderId) {
-        MyOrders myOrder = myOrderRepository.findById(myOrderId).orElse(null);
-        if (!Objects.nonNull(myOrder)) {
-            throw new GeneralException(ErrorConstants.MY_ORDER_NOT_FOUND_ERROR + myOrderId);
-        }
+    public MyOrderResponseDto removeSingleMyOrder(int myOrderId) {
+        MyOrders myOrder = myOrderRepository.findById(myOrderId).orElseThrow(() -> new GeneralException(ErrorConstants.ORDER_NOT_FOUND_ERROR));
         myOrderRepository.delete(myOrder);
-        return "Successfully deleted my-order";
+        return myOrderMapper.convertEntityToDto(myOrder);
     }
 
 }

@@ -9,6 +9,7 @@ import lombok.ToString;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,11 +37,11 @@ public class CartList {
     private int id;
 
     @JoinColumn(name = "user_id")
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @ToString.Exclude
     private User user;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "cart_list_product", joinColumns = {@JoinColumn(name = "cart_list_id")}, inverseJoinColumns = {@JoinColumn(name = "product_id")})
     @ToString.Exclude
     private List<Product> products = new LinkedList<>();
@@ -48,7 +50,12 @@ public class CartList {
         this.products.add(product);
     }
 
-    public void removeProduct(Product product) {
-        this.products.remove(product);
+    public void removeProduct(List<Product> productRequest) {
+        Iterator<Product> productIterator = productRequest.iterator();
+        while (productIterator.hasNext()) {
+            Product product = productIterator.next();
+            this.products.remove(product);
+        }
     }
+
 }

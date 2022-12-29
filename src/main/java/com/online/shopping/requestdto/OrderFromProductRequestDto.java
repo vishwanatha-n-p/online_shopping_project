@@ -25,4 +25,9 @@ public class OrderFromProductRequestDto {
     @Min(value = 1, message = "Enter quantity greater than or equal to 1")
     int quantity;
 
+    public OrderFromProductRequestDto(Integer productId, int quantity) {
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
 }

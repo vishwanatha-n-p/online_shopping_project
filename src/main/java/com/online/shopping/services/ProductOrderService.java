@@ -12,8 +12,8 @@ import com.online.shopping.repository.PriceDetailRepository;
 import com.online.shopping.repository.ProductOrderRepository;
 import com.online.shopping.repository.ProductRepository;
 import com.online.shopping.repository.UserRepository;
-import com.online.shopping.requestdto.OrderFromProductRequestDto;
 import com.online.shopping.requestdto.OrderFromPriceDetailRequestDto;
+import com.online.shopping.requestdto.OrderFromProductRequestDto;
 import com.online.shopping.responsedto.ProductOrderResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,9 +108,10 @@ public class ProductOrderService {
         }
     }
 
-    public String removeProductOrder(int productOrderId) {
-        productOrderRepository.deleteById(productOrderId);
-        return "Successfully deleted Product order where id:" + productOrderId;
+    public ProductOrderResponseDto removeProductOrder(int productOrderId) {
+        ProductOrder productOrder = productOrderRepository.findById(productOrderId).orElse(null);
+        productOrderRepository.delete(productOrder);
+        return orderMapper.convertEntityToDto(productOrder);
     }
 
 }
