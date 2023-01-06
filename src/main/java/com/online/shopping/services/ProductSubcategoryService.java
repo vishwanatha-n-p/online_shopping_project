@@ -39,7 +39,7 @@ public class ProductSubcategoryService {
         return subcategoryRepository.findAll().stream().map(subcategory -> subcategoryMapper.convertEntityToDto(subcategory)).collect(Collectors.toList());
     }
 
-    public List<ProductSubcategoryResponseDto> getParticularCategorySubcategories(int categoryId) {
+    public List<ProductSubcategoryResponseDto> getSubcategoriesOfCategory(int categoryId) {
         Optional<ProductCategory> category = categoryRepository.findById(categoryId);
         if (category.isPresent()) {
             return subcategoryRepository.findAllByProductCategoryId(categoryId).stream().map(sb -> subcategoryMapper.convertEntityToDto(sb)).collect(Collectors.toList());

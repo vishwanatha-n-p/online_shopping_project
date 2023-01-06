@@ -38,8 +38,8 @@ public class ProductSubcategoryController {
 
     @PreAuthorize("hasRole('ROLE_Customer')")
     @GetMapping("/categories/{categoryId}")
-    public List<ProductSubcategoryResponseDto> getParticularCategorySubcategories(@PathVariable int categoryId) {
-        return subcategoryService.getParticularCategorySubcategories(categoryId);
+    public List<ProductSubcategoryResponseDto> getSubcategoriesOfCategory(@PathVariable int categoryId) {
+        return subcategoryService.getSubcategoriesOfCategory(categoryId);
     }
 
     @PreAuthorize("hasRole('ROLE_Manager')")

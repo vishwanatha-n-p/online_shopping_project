@@ -1,4 +1,4 @@
-package com.online.shopping.servicelayer;
+package com.online.shopping.unittestcases.services;
 
 import com.online.shopping.requestdto.OrderFromPriceDetailRequestDto;
 import com.online.shopping.requestdto.OrderFromProductRequestDto;

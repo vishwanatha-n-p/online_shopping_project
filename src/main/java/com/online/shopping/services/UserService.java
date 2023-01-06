@@ -39,7 +39,7 @@ public class UserService {
     }
 
     public UserResponseDto addUser(UserRequestDto userRequestDto) {
-        if (validateUser(userRequestDto.getId())) {
+        if (validateUser(userRequestDto.getUserName(), userRequestDto.getPassword())) {
             throw new UserNotFoundException(ErrorConstants.USER_EXIST_ERROR);
         }
         Role role = roleRepository.findByRoleName(userRequestDto.getRoleName()).orElseThrow(() -> new RoleNotFoundException(ErrorConstants.ROLE_NOT_EXIST_ERROR));
@@ -48,8 +48,8 @@ public class UserService {
         return userMapper.convertEntityToDto(userRepository.save(userResponse));
     }
 
-    private boolean validateUser(int id) {
-        return userRepository.existsById(id);
+    private boolean validateUser(String userName, String password) {
+        return userRepository.existsByUserNameAndPassword(userName, password);
     }
 
     public UserResponseDto removeUser(int userId) {

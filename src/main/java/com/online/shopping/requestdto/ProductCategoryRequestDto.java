@@ -22,4 +22,8 @@ public class ProductCategoryRequestDto {
         this.categoryName = categoryName;
     }
 
+    @Override
+    public String toString() {
+        return "ProductCategoryRequestDto{" + "id=" + id + ", categoryName='" + categoryName + '\'' + '}';
+    }
 }

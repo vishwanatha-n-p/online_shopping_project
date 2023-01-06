@@ -1,4 +1,4 @@
-package com.online.shopping.servicelayer;
+package com.online.shopping.unittestcases.services;
 
 import com.online.shopping.requestdto.ProductSubcategoryRequestDto;
 import com.online.shopping.responsedto.ProductSubcategoryResponseDto;
@@ -20,10 +20,10 @@ public class ProductSubcategoryServiceTest {
 
     @Test
     public void test_addSubcategory() {
-        ProductSubcategoryRequestDto subcategoryResponseDto = new ProductSubcategoryRequestDto("Kitchen, Cookware & Serveware", 3);
-        ProductSubcategoryResponseDto subcategoryResponse = productSubcategoryService.addSubcategory(subcategoryResponseDto);
-        assertEquals(subcategoryResponseDto.getSubcategoryName(), subcategoryResponse.getSubcategoryName());
-        assertEquals(subcategoryResponseDto.getCategoryId(), subcategoryResponse.getProductCategory().getId());
+        ProductSubcategoryRequestDto subcategoryRequestDto = new ProductSubcategoryRequestDto("Kitchen, Cookware & Serveware", 3);
+        ProductSubcategoryResponseDto subcategoryResponse = productSubcategoryService.addSubcategory(subcategoryRequestDto);
+        assertEquals(subcategoryRequestDto.getSubcategoryName(), subcategoryResponse.getSubcategoryName());
+        assertEquals(subcategoryRequestDto.getCategoryId(), subcategoryResponse.getProductCategory().getId());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ProductSubcategoryServiceTest {
     @Test
     public void test_getParticularCategorySubcategories() {
         int categoryId = 1;
-        List<ProductSubcategoryResponseDto> productSubcategories = productSubcategoryService.getParticularCategorySubcategories(categoryId);
+        List<ProductSubcategoryResponseDto> productSubcategories = productSubcategoryService.getSubcategoriesOfCategory(categoryId);
         assertThat(productSubcategories.size()).isGreaterThanOrEqualTo(1);
     }
 
